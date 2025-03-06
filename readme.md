@@ -24,11 +24,11 @@ https://huggingface.co/docs/hub/en/gguf#quantization-types
 
 There is a wide variety of quantized models on HuggingFace, using a variety of quantization techniques. Some of these are marked as legacy, i.e. "not used widely as of today". Here I summarize the non-legacy ones.
 
-A model whose quantization is denoted as $Qb\_K$ (with $b$ the number of bits) represents $b$-bit quantization that uses blocks of multiple weights that each share a scale factor and a bias. 
+A model whose quantization is denoted as $Qb`_`K$ (with $b$ the number of bits) represents $b$-bit quantization that uses blocks of multiple weights that each share a scale factor and a bias. 
 
-This seems vaguely similar to the ideas in [(2)](#literature), except the MX formats have no bias for a whole block, and some of the bit widths in $Qb\_K$ do not seem MX-compliant. $Qb\_K$ also allows for things like $b=3$, even though 3 bit quantization is not specified in MX specification.
+This seems vaguely similar to the ideas in [(2)](#literature), except the MX formats have no bias for a whole block, and some of the bit widths in $Qb\_K$ do not seem MX-compliant. $Qb`_`K$ also allows for things like $b=3$, even though 3 bit quantization is not specified in MX specification.
 
-A model whose quantization is denoted as $IQb\_s$ ($s \in \{XXS, XS, S, M, NL\}$) represents $b$-bit quantization where the weights are also scaled by an importance matrix. It seems like $s$ somehow denotes the precision of the importance matrix, but I was not yet able to find out how exactly. I presume the importance matrix is something like an inverse Hessian matrix described in [(4)](#literature).
+A model whose quantization is denoted as $IQb`_`s$ ($s \in \{XXS, XS, S, M, NL\}$) represents $b$-bit quantization where the weights are also scaled by an importance matrix. It seems like $s$ somehow denotes the precision of the importance matrix, but I was not yet able to find out how exactly. I presume the importance matrix is something like an inverse Hessian matrix described in [(4)](#literature).
 
 The above quantization types conform to a format called GGUF. It seems that the purpose of the MX format is to physically store the bits in a "block with shared scale" format, whereas the GGUF format aims to quantize models by splitting existing weights into blocks and factoring out a scale.
 
