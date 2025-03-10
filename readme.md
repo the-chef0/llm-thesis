@@ -48,3 +48,18 @@ Defines the "MX-complaint" format and low-precision datatypes conforming to it -
 Studies an observation that the Llama7B and Llama13B models contain layers (Attention + FFN) that make almost no change to the hidden representation. They define a metric (BI) for evaluating how "important" a layer is - it measures the cosine similarity between outputs of two consecutive layers. Turns out they were able to up to 20% of the "least important" layers before observing a sharp drop on the MMLU benchmark score. Perplexity seemed to increase roughly linearly.
 
 4. [A Visual Guide to Quantization](https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-quantization)
+
+5. [Pruning vs Quantization: Which is Better?](https://arxiv.org/pdf/2307.02973)
+
+Tries to make general claims about quantization outperforming pruning in most neural network use cases. They obtain the results in an interesting way. First, they formulate the expected error from both quantization and pruning, Then they formulated general optimization problems representing the process of quantization and pruning. They use the expected error models to derive bounds on quantization/pruning error, and they use solutions of the optimization problems to validate the bounds empirically.
+
+The result seems pretty compelling, but I wonder how well their mathematical model of post-training pruning applies to [paper 3](#literature). In this paper, they formulate post-training pruning as finding a weight matrix $w$ and a binary mask matrix $m$ such that $||X(m \cdot w) - Xw_\text{orig}||_2^2$ is minimized. In other words, "find new weights, along with a mask for setting some weights to 0, such that the outputs from the layer are as close as possible to what they are with the original weights". 
+
+In [paper 3](#literature) however, they do not explicitly pick any such mask $m$ or optimize new weights $w$ to prune with $m$. They prune by simply ripping a layer out. If we think of "ripping the layer out" as replacing an attention layer with a unit matrix of compatible dimensions, it is possible in principle to represent this using the language used in this paper. We would have to pick optimal masks and weights to replace each matrix making up the attention layer ($Q$, $K$ and $V$), such that passing through the attention layer is equal to multiplying by an identity matrix (will write out more precisely later).
+
+I'd be curious to see whether the pruning error from [paper 3](#literature) falls into the bounds that this paper establishes and is empirically consistent with it. This paper makes some strong claims, but it's a notably different perspective on pruning.
+
+6. [SplitQuant: Layer Splitting for Low-Bit Neural Network
+Quantization](https://arxiv.org/pdf/2501.12428)
+
+Contains an interesting idea for improving low-precision quantization. Low-precision quantization can fail to capture outliers in weights due to its low resolution and setting the scale away from the outlier. However, removing outliers can reduce performance because they can activate for unusual input cases, improving decision boundaries. In this paper, they run k-means clustering on the weights to capture multiple "centers of mass", identifying the outliers as separate clusters. Then, they split the layer into mutiple low-precision quantized layers, quantizing each one with different ranges, such that the outlier cluster is covered too.
