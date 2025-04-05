@@ -1,4 +1,6 @@
-# Perplexity
+# LLM evaluation metrics
+
+## Perplexity
 
 https://huggingface.co/docs/transformers/en/perplexity
 https://thegradient.pub/understanding-evaluation-metrics-for-language-models/
@@ -18,11 +20,33 @@ This also means that $p_\theta(x_i | x_{<i}) \geq \frac{1}{|V|}$, which is depen
 1. It does not make sense to compare perplexities of two models if their vocabularies have different sizes, unless there is a way to transform them. 
 2. Maybe we can evaluate how "good" or "bad" a change in perplexity is by comparing it to the upper bound, as determined by the model's vocabulary size.
 
-# Types of quantized models
+## CommonSenseQA
+https://paperswithcode.com/paper/commonsenseqa-a-question-answering-challenge
+
+A multiple-choice, common sense benchmark, measured as the percentage of correct answers.
+
+## Measuring Massive Multitask Language Understanding (MMLU)
+https://huggingface.co/datasets/cais/mmlu
+
+Another multiple choice benchmark, including questions from a large range of topics, including but not limited to STEM subjects, humanities, medicine and law. Measured as the percentage of correct answer.
+
+# Quantization techniques and tools
+
+Weights are quantized using symmetric or asymmetric quantization. Activations are quantized with either **dynamic** or **static** quantization. Dynamic quantization calculates statistics of activations after each layer, and uses them to find a zeropoint and scale factor to quantize. Static quantization uses a calibration dataset to collect distribution statistics of activations, computes the quantization parameters based on those, and uses those same ones every time during inference.
+
+## GPTQ
+Let $W$ be a weight matrix and let $H = \frac{\partial^2 \mathcal{L}}{\partial W^2}$ be its Hessian matrix. Let $w_{ij}$ denote an FP32 weight, let $w^q_{ij}$ denote its INT4 quantization, and let $w^{-q}_{ij}$ denote its dequantization from INT4 back to FP32. Then for all rows $i$
+ - $\Delta q = \frac{w_{i1} - w^{-q}_{i1}}{h_{i1}}$
+ - $w^{q}_{ij} = w_{ij} + \Delta q h_{ij}$ for all columns $j$
+
+ That is, weights in a given row are updated based on how sensitive to quantization the value in the first column is.
+
+## GGUF
+Allows to offload layers onto the CPU. It does this by splitting a layer into superblocks, each containing a set of subblocks. Scale factors are computed for the superblock, and for each subblock. The subblock scale factors and quantized using the superblock scale factor, and the quantized subblock scale factors are used to quantize the weights.
 
 https://huggingface.co/docs/hub/en/gguf#quantization-types
 
-There is a wide variety of quantized models on HuggingFace, using a variety of quantization techniques. Some of these are marked as legacy, i.e. "not used widely as of today". Here I summarize the non-legacy ones.
+There is a wide variety of quantized models on HuggingFace, using a variety of GGUF methods. Some of these are marked as legacy, i.e. "not used widely as of today". Here I summarize the non-legacy ones.
 
 A model whose quantization is denoted as $QbK$ (with $b$ the number of bits) represents $b$-bit quantization that uses blocks of multiple weights that each share a scale factor and a bias. 
 
@@ -31,6 +55,24 @@ This seems vaguely similar to the ideas in [(2)](#literature), except the MX for
 A model whose quantization is denoted as $IQbs$ ($s \in \{XXS, XS, S, M, NL\}$) represents $b$-bit quantization where the weights are also scaled by an importance matrix. It seems like $s$ somehow denotes the precision of the importance matrix, but I was not yet able to find out how exactly. I presume the importance matrix is something like an inverse Hessian matrix described in [(4)](#literature).
 
 The above quantization types conform to a format called GGUF. It seems that the purpose of the MX format is to physically store the bits in a "block with shared scale" format, whereas the GGUF format aims to quantize models by splitting existing weights into blocks and factoring out a scale.
+
+## LLaMa-Factory
+https://github.com/hiyouga/LLaMA-Factory
+An LLM compression toolkit.
+
+# Tentative project brief
+Pruning an LLM is can be a straightforward task in some cases, but not in others. Simple LLMs like the first Llama models only have layers of chained transformer blocks with the same input and output dimension everywhere, making it easy to remove a single layer [(paper 3)](#literature). Llama-2 has residual/skip connections, so removing a layer is more challenging but still doable - the residual connection needs to be "rerouted" to the following layer. 
+
+In other and newer models, it becomes considerably more challenging. Multimodal LLMs might contain convolutional layers, where removing one could cause a serious dimension mismatch [(link)](https://github.com/liyunqianggyn/Awesome-LLMs-Pruning/blob/main/concepts/other_concepts.md). Mixture-of-Experts models present yet another set of challenges [(paper 11)](#literature) (still need to read).
+
+It seems like there is a gap in the field - there does not yet exist a general pruning methodology that could be applicable on a wide range of architectures. The purpose of the thesis is to try to come up with such a methodology, and use it to conduct some broader LLM compression experiments.
+
+Pruning is one way to compress an LLM and quantization is another. They seem not to be mutually exclusive, in the sense that the amount of pruning one does impacts the amount of quantization one can do, and vice versa. This indicates that when compressing an LLM, there could be an optimal mixture of both that minimizes size while maximizing performance.
+
+There already exist open-source tools that collect much of the wide range of quantization techniques into one codebase, e.g. [LLaMa-Factory](#llama-factory). We can use such tools in combination with an implementation of our novel LLM pruning methodology to conduct experiments and learn more about this "pruning vs. quantization" tradeoff.
+
+## TODO
+ - Request access to DelftBlue, the TUD supercomputer; try using [LLaMa-Factory](#llama-factory) on it.
 
 # Literature
 
@@ -78,4 +120,20 @@ Pretty much the same as [paper 3](#literature)?
 
 A more fine-grained perspective on pruning compared to papers 3, 8 and 9. Both attention layers and FFN layers are considered independent candidates for pruning. For the metric, they take the relative difference in perplexity between the baseline model and the model with the given layer removed, and then they divide by the number of parameters in the layer - normalized relative impact (NRI). This gives more of a "impact per parameter" view.
 
-Upon computing the NRI of each layer and removing a fixed fraction of the least important ones, there was a considerable amount of Attention and FFN layers removed that were not together in one transformer block. It seems like this sublayer perspective might also be useful.
+Upon computing the NRI of each layer and removing a fixed fraction of the least important ones, there was a considerable amount of Attention and FFN layers removed that were not together in one transformer block. It seems like this sublayer perspective might also be useful
+
+10. [LayerSkip: Enabling Early Exit Inference and Self-Speculative Decoding](https://arxiv.org/abs/2404.16710)
+
+TODO
+
+11. [MoE-Pruner: Pruning Mixture-of-Experts Large Language Model using the Hints from Its Router](https://arxiv.org/abs/2410.12013)
+
+TODO
+
+12. [A Survey on Model Compression for Large Language Models](https://arxiv.org/abs/2308.07633)
+
+TODO
+
+13. [Efficient Large Language Models: A Survey](https://arxiv.org/abs/2312.03863)
+
+TODO
