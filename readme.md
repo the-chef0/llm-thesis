@@ -72,7 +72,10 @@ Pruning is one way to compress an LLM and quantization is another. They seem not
 There already exist open-source tools that collect much of the wide range of quantization techniques into one codebase, e.g. [LLaMa-Factory](#llama-factory). We can use such tools in combination with an implementation of our novel LLM pruning methodology to conduct experiments and learn more about this "pruning vs. quantization" tradeoff.
 
 ## TODO
+ - Contact Mahmood for help with GPU hours estimate for DelftBlue acccess request
  - Request access to DelftBlue, the TUD supercomputer; try using [LLaMa-Factory](#llama-factory) on it.
+ - Write a project proposal
+ - Write a detailed project plan
 
 # Literature
 
