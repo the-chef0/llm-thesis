@@ -60,6 +60,9 @@ The above quantization types conform to a format called GGUF. It seems that the 
 https://github.com/hiyouga/LLaMA-Factory
 An LLM compression toolkit.
 
+## Towards Any Structural Pruning
+https://github.com/VainF/Torch-Pruning
+
 # Tentative project brief
 Pruning an LLM is can be a straightforward task in some cases, but not in others. Simple LLMs like the first Llama models only have layers of chained transformer blocks with the same input and output dimension everywhere, making it easy to remove a single layer [(paper 3)](#literature). Llama-2 has residual/skip connections, so removing a layer is more challenging but still doable - the residual connection needs to be "rerouted" to the following layer. 
 
@@ -71,11 +74,19 @@ Pruning is one way to compress an LLM and quantization is another. They seem not
 
 There already exist open-source tools that collect much of the wide range of quantization techniques into one codebase, e.g. [LLaMa-Factory](#llama-factory). We can use such tools in combination with an implementation of our novel LLM pruning methodology to conduct experiments and learn more about this "pruning vs. quantization" tradeoff.
 
-## TODO
- - Contact Mahmood for help with GPU hours estimate for DelftBlue acccess request
- - Request access to DelftBlue, the TUD supercomputer; try using [LLaMa-Factory](#llama-factory) on it.
- - Write a project proposal
- - Write a detailed project plan
+# Project plan
+
+|   Deadline   |                                                                                                           Milestones                                                                                                           |
+|:------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| 22 April     | Thesis start                                                                                                                                                                                                                   |
+| 31 May       | Completed review of LLM architectures and related pruning strategies <br> Completed classification/taxonomy of of LLM pruning strategies <br> Completed relevant thesis sections                                               |
+| 30 June      | Completed implementation of LLM pruning toolkit <br> Completed experimental design for first iteration of experiments <br> Completed relevant thesis sections                                                                  |
+| 8 July       | First Stage Evaluation                                                                                                                                                                                                         |
+| 31 August    | Completed first iteration of experiments and obtained results <br> Processed experiment results <br> Completed relevant thesis sections <br> Completed experimental design for second iteration of experiments (if applicable) |
+| 30 September | Completed second iteration of experiments and obtained results <br> Processed experiment results <br> Completed relevant thesis sections and first thesis draft                                                                |
+| 7 October    | Green Light Review                                                                                                                                                                                                             |
+| 17 November  | Completed final thesis draft                                                                                                                                                                                                   |
+| 18 November  | Thesis Defense Evaluation                                                                                                                                                                                                      |
 
 # Literature
 
