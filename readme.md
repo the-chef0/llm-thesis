@@ -86,16 +86,24 @@ Upon computing the NRI of each layer and removing a fixed fraction of the least 
 
 10. [LayerSkip: Enabling Early Exit Inference and Self-Speculative Decoding](https://arxiv.org/abs/2404.16710)
 
-TODO
+This is a more dynamic take on the idea of pruning or skipping later layers. Instead of statically pruning some last $k$ layers, the number of layers to skip $k$ is determined at inference time as a function of the input. They train a model with layer dropout, assign higher dropout rates to later layers, and train with a loss function that penalizes late exits.
 
 11. [MoE-Pruner: Pruning Mixture-of-Experts Large Language Model using the Hints from Its Router](https://arxiv.org/abs/2410.12013)
 
-TODO
+This is another dynamic, input dependent technique that prunes expert weights rather than Attention weights. The pruning metric is designed such that expert weights that get utilized the least are more likely to get pruned. The magnitude of any given weight is multiplied by the output of the gate times the element of the token that the weight affects.
 
 12. [A Survey on Model Compression for Large Language Models](https://arxiv.org/abs/2308.07633)
 
-TODO
+Contains a very good taxonomy of existing compression techniques and some experimental results that show their effectiveness.
 
 13. [Efficient Large Language Models: A Survey](https://arxiv.org/abs/2312.03863)
 
-TODO
+Contains a superset of the taxonomy in paper 12, offering a wider and more fine-grained breakdown, and including efficiency-oriented frameworks.
+
+14. [A Survey on Multimodal Large Language Models](https://arxiv.org/abs/2306.13549)
+
+A very nice survey with lots of nice figures that describes how MLLMs are structured, and what networks are used for which components.
+
+15. [BitNet b1.58 2B4T Technical Report](https://arxiv.org/abs/2504.12285)
+
+Microsoft released a tiny 1GB 1.58-bit model that can be run on CPU and is claimed to compete with some other small models with similar parameter counts but higher resource usage.
