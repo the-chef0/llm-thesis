@@ -36,6 +36,31 @@ An LLM compression toolkit.
 ## Towards Any Structural Pruning
 https://github.com/VainF/Torch-Pruning
 
+# TODO
+Investigate depth pruning for each MMLM component
+Consider dependencies
+Identify minimal prunable components
+
+Investigate "feature fusion" as a dimension reduction technique for solving pruning-induced dimension mismatch
+
+## MLLM components
+
+Image modality encoders: 
+CNNs and ViTs (https://arxiv.org/abs/2010.11929)
+CLIP (https://arxiv.org/pdf/2103.00020)
+CNN pruning, fine grained/unstructured transformer pruning?
+
+Audio:
+https://arxiv.org/pdf/2305.11834
+
+Other modalities:
+https://arxiv.org/abs/2309.03905
+
+Modality interfaces?
+
+LLMs:
+Check all architectures
+
 # Literature
 
 1. [FP6-LLM: Efficiently Serving Large Language Models Through FP6-Centric Algorithm-System Co-Design](http://arxiv.org/abs/2401.14112)
@@ -107,3 +132,15 @@ A very nice survey with lots of nice figures that describes how MLLMs are struct
 15. [BitNet b1.58 2B4T Technical Report](https://arxiv.org/abs/2504.12285)
 
 Microsoft released a tiny 1GB 1.58-bit model that can be run on CPU and is claimed to compete with some other small models with similar parameter counts but higher resource usage.
+
+16. [MM1: Methods, Analysis & Insights from Multimodal LLM Pre-training](https://arxiv.org/abs/2403.09611)
+
+A detailed technical ablation study on MLLM components.
+
+17. [DepGraph: Towards Any Structural Pruning](https://arxiv.org/abs/2301.12900)
+
+18. [Isomorphic Pruning for Vision Models](https://arxiv.org/abs/2407.04616)
+
+20. [Differentiable Transportation Pruning](https://openaccess.thecvf.com/content/ICCV2023/papers/Li_Differentiable_Transportation_Pruning_ICCV_2023_paper.pdf)
+
+21. [Learning Structured Sparsity in Deep Neural Networks](https://arxiv.org/pdf/1608.03665)
