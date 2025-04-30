@@ -1,3 +1,14 @@
+# Meeting Minutes and Summaries
+
+## 29 April 2025
+- Agreed that a review and classification of LLM pruning techniques won't be necessary because we now know we want to focus on depth/layer pruning
+- The literature section of the thesis will contain depth pruning techniques and the multimodal LLM perspective on pruning.
+- The novelty of the thesis will be presented as a more fine-grained approach to layer pruning compared to removing entire transformer blocks - finding "minimal prunable units"
+- Will focus on pruning models that are already small and seeing how far we can push them with a fine-grained depth pruning approach.
+- Need to be careful with choices of benchmarks when evaluating because some might be affected by pruning while others might not.
+- I will continue by implementing a way of mapping how an input flows through a model to see how the layers depend on each other and what can be pruned.
+- Theoretically, dimension incompatibilities might arise when pruning certain layers, but it's not guaranteed to happen in practice. If it happens, we will transform the dimensions with a small LoRA/QLoRA matrix or find some other way.
+
 # Earlier Notes on Pruning and Performance Metrics
 [Click here to navigate to the earlier notes.](./earlier-nodes.md)
 
@@ -144,3 +155,12 @@ A detailed technical ablation study on MLLM components.
 20. [Differentiable Transportation Pruning](https://openaccess.thecvf.com/content/ICCV2023/papers/Li_Differentiable_Transportation_Pruning_ICCV_2023_paper.pdf)
 
 21. [Learning Structured Sparsity in Deep Neural Networks](https://arxiv.org/pdf/1608.03665)
+
+22. [Residual Networks Behave Like Ensembles of Relatively Shallow Networks](https://arxiv.org/abs/1605.06431)
+
+Could be useful for pruning layers with residuals.
+
+23. [LLM-Pruner: On the Structural Pruning
+of Large Language Models](https://arxiv.org/pdf/2305.11627)
+
+Contains something about analyzing dependencies.
