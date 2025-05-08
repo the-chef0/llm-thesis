@@ -1,5 +1,15 @@
 # Meeting Minutes and Summaries
 
+## 8 April 2025
+- To explore a largely unexplored level of LLM depth pruning granularity, we will focus on matrix-level pruning, i.e. removing entire parameter matrices.
+- The idea is to look for matrices that behave like identity-like mappings, remove them, and patch downstream/upstream parameters to resolve dimensionality issues.
+- The experiments will likely involve trying a variety of metrics that aim to identify this identity-like nature. These could be analytical metrics (e.g. magnitude, spectral norm, similarity to identity) or sampling-based metrics (e.g. cosine similarity or CKA over input-output pairs).
+- The metrics should probably need to work on both square (i.e. dimension preserving) and rectangular (i.e. dimension transforming) matrices. I have already researched some and they will likely be candidates for experimentation.
+- If a matrix is rectangular (dimension transforming), and also exhibits identity-like behavior (dimension transformation with minimal information loss), it implies that we can also width-prune some upstream/downstream matrices to remove the extraneous dimensions. This would also make the layer input/output dimensions compatible again.
+- I am now familiar with various papers and repositories that implement layer/parameter dependency modelling, along with the general implementation approaches (PyTorch computation graph traversal and JIT trace traversal).
+- I will work on implementing this "matrix depth pruning + cascading width pruning" idea with the help of existing dependency modelling and width pruning research.
+- I have already prepared a setup that allows me to benchmark pretty much any HuggingFace LLM on most of the popular benchmarking datasets. It also works on DelftBlue but with some caveats - still need to iron them out.
+
 ## 29 April 2025
 - Agreed that a review and classification of LLM pruning techniques won't be necessary because we now know we want to focus on depth/layer pruning
 - The literature section of the thesis will contain depth pruning techniques and the multimodal LLM perspective on pruning.
@@ -47,13 +57,6 @@ An LLM compression toolkit.
 ## Towards Any Structural Pruning
 https://github.com/VainF/Torch-Pruning
 
-# TODO
-Investigate depth pruning for each MMLM component
-Consider dependencies
-Identify minimal prunable components
-
-Investigate "feature fusion" as a dimension reduction technique for solving pruning-induced dimension mismatch
-
 ## MLLM components
 
 Image modality encoders: 
@@ -71,6 +74,7 @@ Modality interfaces?
 
 LLMs:
 Check all architectures
+
 
 # Literature
 
@@ -160,7 +164,23 @@ A detailed technical ablation study on MLLM components.
 
 Could be useful for pruning layers with residuals.
 
-23. [LLM-Pruner: On the Structural Pruning
-of Large Language Models](https://arxiv.org/pdf/2305.11627)
+23. [LLM-Pruner: On the Structural Pruning of Large Language Models](https://arxiv.org/pdf/2305.11627)
 
 Contains something about analyzing dependencies.
+
+24. [Feature Flow Regularization: Improving Structured Sparsity in Deep Neural Networks](https://ar5iv.labs.arxiv.org/html/2106.02914)
+I am now looking into papers that look at pruning using a criterion of "how similar is this layer/module to an identity operator". In this paper, they define some expression for a curve that represents operations done by a model, and the length is related to the number of transformations the model does. A shorter curve is supposed to imply more identity operators. They train some CNNs in a way that penalizes the length and therefore incentivizes the training of identity operators. Then they prune out the operators that are close to being identities.
+
+25. [Pruning Redundant Mappings in Transformer Models via Spectral-Normalized Identity Prior](https://arxiv.org/abs/2010.01791)
+Pruning entire Attention blocks and MLPs after training them for identity-like sparsity by penalizing the spectral norm.
+
+26. [Effective Layer Pruning Through Similarity Metric Perspective](https://arxiv.org/html/2405.17081v2)
+Measures similarity between feature maps to quantify layer importance, but like many others, gives up on pruning layers that would induce a dimension mismatch.
+
+27. [Learning Strict Identity Mappings in Deep Residual Networks](https://arxiv.org/abs/1804.01661)
+Since ResNet has residual connections, i.e. $F(x) + x$, then if $F(x) = 0$, the layer just becomes an identity mapping. They add a gating function $S(F(x)) + x$ where $S = 0$ if the norm of $F(x)$ falls under a threshold $\epsilon$. This way they encourage the training of identity mappings and then prune these useless layers.
+
+28. [Pruning Redundant Mappings in Transformer Models via Spectral-Normalized Identity Prior](https://arxiv.org/abs/2010.01791)
+
+29. [LLM-Pruner: On the Structural Pruning of Large Language Models](https://arxiv.org/abs/2305.11627)
+Evaluates parameter importance using a Taylor series expansion. Could be useful later.
