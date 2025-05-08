@@ -1,6 +1,6 @@
 # Meeting Minutes and Summaries
 
-## 8 April 2025
+## 8 May 2025
 - To explore a largely unexplored level of LLM depth pruning granularity, we will focus on matrix-level pruning, i.e. removing entire parameter matrices.
 - The idea is to look for matrices that behave like identity-like mappings, remove them, and patch downstream/upstream parameters to resolve dimensionality issues.
 - The experiments will likely involve trying a variety of metrics that aim to identify this identity-like nature. These could be analytical metrics (e.g. magnitude, spectral norm, similarity to identity) or sampling-based metrics (e.g. cosine similarity or CKA over input-output pairs).
