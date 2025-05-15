@@ -184,3 +184,5 @@ Since ResNet has residual connections, i.e. $F(x) + x$, then if $F(x) = 0$, the 
 
 29. [LLM-Pruner: On the Structural Pruning of Large Language Models](https://arxiv.org/abs/2305.11627)
 Evaluates parameter importance using a Taylor series expansion. Could be useful later.
+
+30. [Compact Language Models via Pruning and Knowledge Distillation](https://arxiv.org/abs/2407.14679)
